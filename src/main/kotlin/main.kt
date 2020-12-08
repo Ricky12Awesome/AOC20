@@ -1,3 +1,4 @@
+import java.lang.StringBuilder
 import java.nio.file.Paths
 import kotlin.io.path.bufferedReader
 import kotlin.streams.asSequence
@@ -216,6 +217,35 @@ object AOCDay5 : AOCDay(5) {
 }
 
 object AOCDay6 : AOCDay(6) {
+  private val input = _input
+    .lines()
+    .fold(StringBuilder()) { acc, s -> if (s.isEmpty()) acc.append("\n") else acc.append("$s ") }
+    .splitToSequence("\n")
+    .map { it.split(" ").dropLast(1) }
+
+
+  override fun part1(): Int {
+    return input.map { it.joinToString("").toSet() }.sumBy { it.count() }
+  }
+
+  override fun part2(): Any {
+    return input
+      .map { group ->
+        val map = mutableMapOf<Char, Int>()
+
+        group.forEach { person ->
+          person.forEach { c ->
+            map[c] = (map[c] ?: 0) + 1
+          }
+        }
+
+        map.values.count { it == group.size }
+      }
+      .sum()
+  }
+}
+
+object AOCDay7 : AOCDay(7) {
   override fun part1(): Any {
     TODO()
   }
@@ -223,11 +253,16 @@ object AOCDay6 : AOCDay(6) {
   override fun part2(): Any {
     TODO()
   }
-
 }
 
+object AOCDay8 : AOCDay(8) {
+  override fun part1(): Any {
+    TODO()
+  }
 
-
-
+  override fun part2(): Any {
+    TODO()
+  }
+}
 
 

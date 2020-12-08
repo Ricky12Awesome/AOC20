@@ -23,5 +23,14 @@ class Test {
 
   @Test fun `Day 5 Part 1`() = part1(AOCDay5)
   @Test fun `Day 5 Part 2`() = part2(AOCDay5)
+
+  @Test fun `Day 6 Part 1`() = part1(AOCDay6)
+  @Test fun `Day 6 Part 2`() = part2(AOCDay6)
+
+  @Test fun `Day 7 Part 1`() = part1(AOCDay7)
+  @Test fun `Day 7 Part 2`() = part2(AOCDay7)
+
+  @Test fun `Day 8 Part 1`() = part1(AOCDay8)
+  @Test fun `Day 8 Part 2`() = part2(AOCDay8)
 }
 
