@@ -29,10 +29,7 @@ fun main(args: Array<String>) {
 }
 
 class Input(private val day: Int) {
-  fun reader(): BufferedReader {
-    return input?.bufferedReader() ?: javaClass.getResourceAsStream("/AOCDay$day").bufferedReader()
-  }
-
+  fun reader() = input?.bufferedReader() ?: javaClass.getResourceAsStream("/AOCDay$day").bufferedReader()
   fun lines() = reader().lines().asSequence()
   fun text() = reader().readText()
 
@@ -148,16 +145,11 @@ object AOCDay3 : AOCDay(3) {
 
 object AOCDay4 : AOCDay(4) {
   private val required = listOf("byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid")
-  private val optional = listOf("cid")
 
-  data class Passport(
-    val data: Map<String, String>
-  ) {
-
-    fun validate() = data.all { validate(it.key, it.value) }
+  data class Passport(val data: Map<String, String>) {
+    fun validateKeys() = data.keys.containsAll(required)
+    fun validate() = if (!validateKeys()) false else data.all { validate(it.key, it.value) }
     fun validate(key: String, value: String): Boolean {
-      if (!data.keys.containsAll(required)) return false
-
       return when (key) {
         "byr" -> value.toIntOrNull() in 1920..2002
         "iyr" -> value.toIntOrNull() in 2010..2020
@@ -178,34 +170,19 @@ object AOCDay4 : AOCDay(4) {
 
   private val input = _input
     .lines()
-    .fold(0 to mutableListOf<MutableMap<String, String>>()) { (i, list), s ->
-      if (s.isEmpty()) {
-        return@fold i + 1 to list
-      }
-
-      if (i > list.lastIndex) {
-        list += mutableMapOf()
-      }
-
-      s.split(" ")
-        .map { it.split(":") }
-        .map { it[0] to it[1] }
-        .forEach { (key, value) ->
-          list[i][key] = value
-        }
-
-      i to list
-    }.second
+    .fold(StringBuilder()) { acc, s -> if (s.isEmpty()) acc.append("\n") else acc.append("$s ") }
+    .splitToSequence("\n")
+    .map { it.split(" ").dropLast(1) }
+    .map { it.map { it.split(":") }.map { it[0] to it[1] }.toTypedArray() }
+    .map(::mapOf)
     .map(::Passport)
 
   override fun part1(): Int {
-    return input.count {
-      it.data.keys.containsAll(required)
-    }
+    return input.count(Passport::validateKeys)
   }
 
   override fun part2(): Int {
-    return input.count(AOCDay4.Passport::validate)
+    return input.count(Passport::validate)
   }
 }
 
