@@ -1,18 +1,44 @@
+import com.xenomachina.argparser.ArgParser
+import com.xenomachina.argparser.default
+import java.io.BufferedReader
 import java.lang.StringBuilder
+import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.bufferedReader
 import kotlin.streams.asSequence
 
-fun main(args: Array<String>) {
-  println(args.toList())
+class Arguments(parser: ArgParser) {
+  val input by parser.storing("Input File").default("")
+  val day by parser.storing("Day")
+  val part by parser.storing("Part")
 }
 
-class Input(day: Int) {
-  val path = javaClass.getResource("/AOCDay$day").toURI().let(Paths::get)
+fun main(args: Array<String>) {
+  ArgParser(args).parseInto(::Arguments).run {
+    Input.input = input.takeIf(String::isNotEmpty)?.let(Paths::get)
 
-  fun reader() = path.bufferedReader()
+    val instance = Class.forName("AOCDay$day").kotlin.objectInstance as AOCDay
+    val value = when (part) {
+      "1" -> instance.part1()
+      "2" -> instance.part2()
+      else -> error("Invalid Part")
+    }
+
+    println(value)
+  }
+}
+
+class Input(private val day: Int) {
+  fun reader(): BufferedReader {
+    return input?.bufferedReader() ?: javaClass.getResourceAsStream("/AOCDay$day").bufferedReader()
+  }
+
   fun lines() = reader().lines().asSequence()
   fun text() = reader().readText()
+
+  companion object {
+    var input: Path? = null
+  }
 }
 
 sealed class AOCDay(day: Int) {
@@ -133,12 +159,12 @@ object AOCDay4 : AOCDay(4) {
       if (!data.keys.containsAll(required)) return false
 
       return when (key) {
-        "byr" -> value.toIntOrNull()?.takeIf { it in 1920..2002 } != null
-        "iyr" -> value.toIntOrNull()?.takeIf { it in 2010..2020 } != null
-        "eyr" -> value.toIntOrNull()?.takeIf { it in 2020..2030 } != null
+        "byr" -> value.toIntOrNull() in 1920..2002
+        "iyr" -> value.toIntOrNull() in 2010..2020
+        "eyr" -> value.toIntOrNull() in 2020..2030
         "hgt" -> when {
-          value.endsWith("cm") -> value.dropLast(2).toIntOrNull()?.takeIf { it in 150..193 } != null
-          value.endsWith("in") -> value.dropLast(2).toIntOrNull()?.takeIf { it in 59..76 } != null
+          value.endsWith("cm") -> value.dropLast(2).toIntOrNull() in 150..193
+          value.endsWith("in") -> value.dropLast(2).toIntOrNull() in 59..76
           else -> false
         }
         "hcl" -> value.matches(Regex("^#[0-9a-f]{6}$"))
@@ -179,7 +205,7 @@ object AOCDay4 : AOCDay(4) {
   }
 
   override fun part2(): Int {
-    return input.count(Passport::validate)
+    return input.count(AOCDay4.Passport::validate)
   }
 }
 
@@ -223,7 +249,6 @@ object AOCDay6 : AOCDay(6) {
     .splitToSequence("\n")
     .map { it.split(" ").dropLast(1) }
 
-
   override fun part1(): Int {
     return input.map { it.joinToString("").toSet() }.sumBy { it.count() }
   }
@@ -256,6 +281,16 @@ object AOCDay7 : AOCDay(7) {
 }
 
 object AOCDay8 : AOCDay(8) {
+  override fun part1(): Any {
+    TODO()
+  }
+
+  override fun part2(): Any {
+    TODO()
+  }
+}
+
+object AOCDay9 : AOCDay(9) {
   override fun part1(): Any {
     TODO()
   }
