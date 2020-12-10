@@ -32,5 +32,8 @@ class Test {
 
   @Test fun `Day 8 Part 1`() = part1(AOCDay8)
   @Test fun `Day 8 Part 2`() = part2(AOCDay8)
+
+  @Test fun `Day 9 Part 1`() = part1(AOCDay9)
+  @Test fun `Day 9 Part 2`() = part2(AOCDay9)
 }
 

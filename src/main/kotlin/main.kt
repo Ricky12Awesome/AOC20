@@ -1,10 +1,10 @@
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.default
-import java.io.BufferedReader
 import java.lang.StringBuilder
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.bufferedReader
+import kotlin.math.max
 import kotlin.streams.asSequence
 
 class Arguments(parser: ArgParser) {
@@ -248,12 +248,52 @@ object AOCDay6 : AOCDay(6) {
 }
 
 object AOCDay7 : AOCDay(7) {
+  private const val shiny = "shiny gold"
+
+  private val input = _input
+    .lines()
+    .map { it.replace(Regex("\\s?bag(s?)"), "") }
+    .map { it.split(" contain ") }
+    .map { (bag, bags) ->
+      bag to bags
+        .splitToSequence(", ")
+        .map { it.removeSuffix(".") }
+        .map { it.split(" ", limit = 2) }
+        .map { (amount, name) -> (amount.toIntOrNull() ?: 0) to name }
+    }
+    .map { (bag, bags) -> bag to (bags.toList().takeUnless { it.contains(0 to "other") } ?: listOf()) }
+    .associate { (bag, bags) -> bag to bags }
+
   override fun part1(): Any {
-    TODO()
+    val hasGoldenBag = mutableMapOf<String, Boolean>()
+
+    fun containsShiny(bags: List<String>) = shiny in bags || bags.any { hasGoldenBag[it] ?: false }
+    fun setBagsWithGoldenBags(bag: String, bags: List<String>) {
+      bags.forEach { name ->
+        input[name]?.let {
+          val it = it.map { it.second }
+
+          setBagsWithGoldenBags(name, it)
+          hasGoldenBag[name] = containsShiny(it)
+        }
+      }
+
+      hasGoldenBag[bag] = containsShiny(bags)
+    }
+
+    input.forEach { (bag, bags) ->
+      setBagsWithGoldenBags(bag, bags.map { it.second })
+    }
+
+    return hasGoldenBag.values.count { it }
   }
 
   override fun part2(): Any {
-    TODO()
+    fun sum(bags: List<Pair<Int, String>>): Int = bags.fold(1) { acc, (amount, name) ->
+      acc + (input[name]!!.let(::sum) * amount)
+    }
+
+    return input[shiny]!!.let(::sum) - 1
   }
 }
 
