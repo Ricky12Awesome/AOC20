@@ -2,7 +2,6 @@
 
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.default
-import java.lang.StringBuilder
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.bufferedReader
@@ -299,7 +298,7 @@ object AOCDay7 : AOCDay(7) {
 }
 
 object AOCDay8 : AOCDay(8) {
-  data class ExecutionResult(val value: Int, val finished: Boolean, val executed: List<Int>, )
+  data class ExecutionResult(val value: Int, val finished: Boolean, val executed: List<Int>)
 
   private val input = _input
     .lines()
@@ -355,12 +354,47 @@ object AOCDay8 : AOCDay(8) {
 }
 
 object AOCDay9 : AOCDay(9) {
-  override fun part1(): Any {
-    TODO()
+  private const val size = 25
+
+  val input = _input
+    .lines()
+    .map(String::toLong)
+    .toList()
+
+  override fun part1(): Long {
+    val (output) = input
+      .asSequence()
+      .windowed(size + 1) { it[size] to it.take(size) }
+      .first { (match, previous) ->
+        previous.forEachIndexed { ix, x ->
+          previous.forEachIndexed { iy, y ->
+            if (ix != iy && x + y == match) {
+              return@first false
+            }
+          }
+        }
+
+        true
+      }
+
+    return output
   }
 
   override fun part2(): Any {
-    TODO()
+    val match = part1()
+    var size = 2
+
+    while (true) {
+      val result = input.windowed(size).firstOrNull {
+        it.sum() == match
+      }
+
+      if (result != null) {
+        return result.minOrNull()!! + result.maxOrNull()!!
+      } else {
+        size++
+      }
+    }
   }
 }
 
