@@ -1,10 +1,11 @@
+@file:Suppress("MemberVisibilityCanBePrivate", "NestedLambdaShadowedImplicitParameter", "NAME_SHADOWING")
+
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.default
 import java.lang.StringBuilder
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.bufferedReader
-import kotlin.math.max
 import kotlin.streams.asSequence
 
 class Arguments(parser: ArgParser) {
@@ -187,12 +188,12 @@ object AOCDay4 : AOCDay(4) {
 }
 
 object AOCDay5 : AOCDay(5) {
-  const val front = 'F'
-  const val back = 'B'
-  const val left = 'L'
-  const val right = 'R'
-  const val lower = "$front$left"
-  const val upper = "$back$right"
+  private const val front = 'F'
+  private const val back = 'B'
+  private const val left = 'L'
+  private const val right = 'R'
+  private const val lower = "$front$left"
+  private const val upper = "$back$right"
 
   private fun convert(input: String): Int {
     return input.map {
@@ -298,12 +299,58 @@ object AOCDay7 : AOCDay(7) {
 }
 
 object AOCDay8 : AOCDay(8) {
+  data class ExecutionResult(val value: Int, val finished: Boolean, val executed: List<Int>, )
+
+  private val input = _input
+    .lines()
+    .map { it.split(" ") }
+    .map { it[0] to it[1].toInt() }
+    .toList()
+
+  private fun execute(input: List<Pair<String, Int>>): ExecutionResult {
+    var acc = 0
+    var i = 0
+    var finished = true
+    val executedInstructions = mutableListOf<Int>()
+
+    while (i <= input.lastIndex) {
+      val (instruction, amount) = input[i]
+
+      if (i in executedInstructions) {
+        finished = false
+        break
+      }
+
+      executedInstructions += i
+
+      when (instruction) {
+        "acc" -> acc += amount
+        "jmp" -> {
+          i += amount
+          continue
+        }
+      }
+
+      i++
+    }
+
+    return ExecutionResult(acc, finished, executedInstructions)
+  }
+
   override fun part1(): Any {
-    TODO()
+    return execute(input).value
   }
 
   override fun part2(): Any {
-    TODO()
+    val (_, _, executed) = execute(input)
+    val input = input.toMutableList()
+
+    input[executed.last()] = "nop" to 0
+
+    val result = execute(input)
+
+    return if (result.finished) result.value
+    else error("Program didn't exit properly.")
   }
 }
 
@@ -317,4 +364,162 @@ object AOCDay9 : AOCDay(9) {
   }
 }
 
+object AOCDay10 : AOCDay(10) {
+  override fun part1(): Any {
+    TODO()
+  }
 
+  override fun part2(): Any {
+    TODO()
+  }
+}
+
+object AOCDay11 : AOCDay(11) {
+  override fun part1(): Any {
+    TODO()
+  }
+
+  override fun part2(): Any {
+    TODO()
+  }
+}
+
+object AOCDay12 : AOCDay(12) {
+  override fun part1(): Any {
+    TODO()
+  }
+
+  override fun part2(): Any {
+    TODO()
+  }
+}
+
+object AOCDay13 : AOCDay(13) {
+  override fun part1(): Any {
+    TODO()
+  }
+
+  override fun part2(): Any {
+    TODO()
+  }
+}
+
+object AOCDay14 : AOCDay(14) {
+  override fun part1(): Any {
+    TODO()
+  }
+
+  override fun part2(): Any {
+    TODO()
+  }
+}
+
+object AOCDay15 : AOCDay(15) {
+  override fun part1(): Any {
+    TODO()
+  }
+
+  override fun part2(): Any {
+    TODO()
+  }
+}
+
+object AOCDay16 : AOCDay(16) {
+  override fun part1(): Any {
+    TODO()
+  }
+
+  override fun part2(): Any {
+    TODO()
+  }
+}
+
+object AOCDay17 : AOCDay(17) {
+  override fun part1(): Any {
+    TODO()
+  }
+
+  override fun part2(): Any {
+    TODO()
+  }
+}
+
+object AOCDay18 : AOCDay(18) {
+  override fun part1(): Any {
+    TODO()
+  }
+
+  override fun part2(): Any {
+    TODO()
+  }
+}
+
+object AOCDay19 : AOCDay(19) {
+  override fun part1(): Any {
+    TODO()
+  }
+
+  override fun part2(): Any {
+    TODO()
+  }
+}
+
+object AOCDay20 : AOCDay(20) {
+  override fun part1(): Any {
+    TODO()
+  }
+
+  override fun part2(): Any {
+    TODO()
+  }
+}
+
+object AOCDay21 : AOCDay(21) {
+  override fun part1(): Any {
+    TODO()
+  }
+
+  override fun part2(): Any {
+    TODO()
+  }
+}
+
+object AOCDay22 : AOCDay(22) {
+  override fun part1(): Any {
+    TODO()
+  }
+
+  override fun part2(): Any {
+    TODO()
+  }
+}
+
+object AOCDay23 : AOCDay(23) {
+  override fun part1(): Any {
+    TODO()
+  }
+
+  override fun part2(): Any {
+    TODO()
+  }
+}
+
+object AOCDay24 : AOCDay(24) {
+  override fun part1(): Any {
+    TODO()
+  }
+
+  override fun part2(): Any {
+    TODO()
+  }
+}
+
+object AOCDay25 : AOCDay(25) {
+  override fun part1(): Any {
+    TODO()
+  }
+
+  override fun part2(): Any {
+    TODO()
+  }
+}
